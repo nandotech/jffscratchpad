@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	pb "github.com/nandotech/jffscratchpad/sayrpc/api"
+	pb "github.com/campoy/justforfunc/12-say-grpc/api"
 
 	"google.golang.org/grpc"
 )
@@ -15,7 +15,7 @@ func main() {
 	backend := flag.String("b", "localhost:8080", "address of the say backend")
 	output := flag.String("o", "output.wav", "wav file  where the output will be created")
 	flag.Parse()
-	conn, err := grpc.Dial(*backend)
+	conn, err := grpc.Dial(*backend, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("could not connect to %s: %v", *backend, err)
 	}
