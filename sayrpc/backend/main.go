@@ -4,7 +4,9 @@ import (
 	//	"context"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"net"
+	"os/exec"
 
 	"github.com/Sirupsen/logrus"
 	pb "github.com/nandotech/jffscratchpad/sayrpc/api"
@@ -29,17 +31,26 @@ func main() {
 	}
 }
 
-type server struct {
-}
+type server struct{}
 
 func (server) Say(ctx context.Context, text *pb.Text) (*pb.Speech, error) {
-	return nil, nil
-}
+	f, err := ioutil.TempFile("", "")
+	if err != nil {
+		return nil, fmt.Errorf("could not create tmp file: %v", err)
+	}
+	if err := f.Close(); err != nil {
+		return nil, fmt.Errorf("could not close %s: %v", f.Name(), err)
+	}
 
-// Calling flite from cli --saving for later
-// cmd := exec.Command("flite", "-t", os.Args[1], "-o", "output.wav")
-// cmd.Stdout = os.Stdout
-// cmd.Stderr = os.Stderr
-// if err := cmd.Run(); err != nil {
-// 	log.Fatal(err)
-// }
+	cmd := exec.Command("flite", "-t", text.Text, "-o", f.Name())
+	if data, err := cmd.CombinedOutput(); err != nil {
+		return nil, fmt.Errorf("flite failed: %s", data)
+	}
+
+	data, err := ioutil.ReadFile(f.Name())
+	if err != nil {
+		return nil, fmt.Errorf("could not read tmp file: %v", err)
+	}
+
+	return &pb.Speech{Audio: data}, nil
+}
