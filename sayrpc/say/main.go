@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 
 	pb "github.com/nandotech/jffscratchpad/sayrpc/api"
 
@@ -15,6 +17,11 @@ func main() {
 	backend := flag.String("b", "localhost:8080", "address of the say backend")
 	output := flag.String("o", "output.wav", "wav file  where the output will be created")
 	flag.Parse()
+
+	if flag.NArg() < 1 {
+		fmt.Printf("usage:\n\t%s \"text to speak\"\n", os.Args[0])
+		os.Exit(1)
+	}
 	conn, err := grpc.Dial(*backend, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("could not connect to %s: %v", *backend, err)
