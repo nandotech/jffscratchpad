@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	pb "github.com/campoy/justforfunc/12-say-grpc/api"
+	pb "github.com/nandotech/jffscratchpad/sayrpc/api"
 
 	"google.golang.org/grpc"
 )
@@ -28,7 +28,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("could not say %s: %v", text.Text, err)
 	}
-	if err := ioutil.WriteFile("*output", res.Audio, 0666); err != nil {
+	if err := ioutil.WriteFile(*output, res.Audio, 0666); err != nil {
 		log.Fatalf("could not write to %s: %v", text.Text, err)
 	}
 

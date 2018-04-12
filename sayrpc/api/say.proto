@@ -1,4 +1,4 @@
-syntax = "proto2";
+syntax = "proto3";
 
 package say;
 
@@ -7,9 +7,9 @@ service TextToSpeech {
 }
 
 message Text {
-   optional string text = 1;
+    string text = 1;
 }
 
 message Speech {
-   optional bytes Audio = 1;
+    bytes audio = 1;
 }
